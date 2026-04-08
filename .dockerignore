@@ -1,0 +1,16 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.idea/
+.git/
+*.md
+pip_out.txt
+py_list.txt
+fix_colab.py
+colab_server.ipynb
+*.bin
+*.safetensors
+*.ckpt
+tribe_weights/

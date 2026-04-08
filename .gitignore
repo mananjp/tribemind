@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model weights (too large for git)
+tribe_weights/
+*.bin
+*.safetensors
+*.ckpt
+
+# Misc
+pip_out.txt
+py_list.txt
+fix_colab.py
+colab_server.ipynb
