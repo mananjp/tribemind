@@ -204,17 +204,9 @@ with st.sidebar:
         "Powered by **Meta TRIBE v2** \u2014 a tri-modal fMRI foundation model "
         "trained on 500+ hours of brain scans from 700+ volunteers."
     )
-    st.divider()
-    backend_url = st.text_input(
-        "\U0001f517 Backend URL",
-        value=os.getenv("TRIBE_BACKEND_URL", "http://localhost:8000"),
-        placeholder="http://localhost:8000"
-    )
-    if backend_url:
-        os.environ["TRIBE_BACKEND_URL"] = backend_url
-        st.success("Backend connected!")
-    else:
-        st.warning("No backend URL \u2014 running in **demo mode** with simulated activations.")
+    # Ensure backend URL is in env, defaulting to localhost if not set in .env
+    if "TRIBE_BACKEND_URL" not in os.environ:
+        os.environ["TRIBE_BACKEND_URL"] = "http://localhost:8000"
 
     st.divider()
     activation_threshold = st.slider("Activation threshold", 0.0, 1.0, 0.3, 0.05)
@@ -228,12 +220,10 @@ with st.sidebar:
         st.info("\U0001f3eb Research mode ON \u2014 showing full neuroscience analysis including reward circuits, arousal pathways, and dopaminergic system insights.")
 
     st.divider()
-    st.markdown("### \U0001f916 AI Summary (Groq)")
-    groq_key = st.text_input("\U0001f511 Groq API Key", type="password",
-                             value=os.getenv("GROQ_API_KEY", ""),
-                             placeholder="gsk_...")
-    if groq_key:
-        os.environ["GROQ_API_KEY"] = groq_key
+    st.markdown("### \U0001f916 AI Summary")
+    
+    # Read Groq key directly from environment (set via .env)
+    groq_key = os.getenv("GROQ_API_KEY", "")
     groq_model = st.selectbox("LLM Model", [
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
