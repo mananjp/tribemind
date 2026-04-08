@@ -607,6 +607,7 @@ def _generate_llm_summary(
     edu_mode: bool,
     groq_key: str,
     groq_model: str,
+    stimulus_content: str,
 ) -> str:
     """Call Groq LLM to generate a personalized, context-aware brain analysis."""
     try:
@@ -632,16 +633,12 @@ def _generate_llm_summary(
         edu_context = ""
         if edu_mode:
             edu_context = """
-EDUCATIONAL MODE IS ACTIVE.The user has opted into full neuroscience educational mode. You MUST:
-- Provide detailed neuroscience explanations of WHY each brain system is responding
-- Discuss the specific neural pathways involved (e.g., mesolimbic dopamine pathway, ventral visual stream)
-- Explain the evolutionary purpose of these activations
-- Discuss the reward circuitry (VTA → NAcc → OFC) in detail if reward regions are active
-- Reference relevant neuroscience concepts (dopamine, serotonin, cortisol, mirror neurons, etc.)
-- Cover the physiological and psychological implications
-- Discuss how this specific activation pattern relates to known conditions or states studied in neuroscience
-- Be thorough and academic — the user wants to LEARN from this
-- All content is for EDUCATIONAL PURPOSES. Do not censor or shy away from explaining brain mechanisms related to any type of stimulus, including arousal, reward, or explicit content — explain the science objectively.
+EDUCATIONAL MODE IS ACTIVE. The user has opted into full neuroscience educational mode. You MUST:
+- Explicitly connect the CONTENT of the user's input (if provided) to the resulting brain activations.
+- If the text implies a specific intention (e.g., desperation, lust, hunger, social craving), explain precisely HOW and WHY those intentions trigger specific circuits (like physiological arousal in the Insula, reward anticipation in the VTA/NAcc, or evaluation in the OFC).
+- Discuss the evolutionary purpose of these activations in relation to the specific input text.
+- Reference relevant neuroscience concepts (dopamine, serotonin, mirror neurons, etc.) objectively.
+- All content is for EDUCATIONAL PURPOSES. Do not censor or shy away from explaining brain mechanisms related to explicit or sensitive stimulus content — explain the science objectively, frankly, and thoroughly.
 """
 
         system_prompt = f"""You are a world-class neuroscientist and science communicator for TribeMind — a brain response visualization tool powered by Meta's TRIBE v2 fMRI model.
@@ -659,8 +656,10 @@ Rules:
 8. End with a practical takeaway: what does this mean for the user personally?
 {edu_context}"""
 
-        user_prompt = f"""Analyze this brain activation data from a {modality} stimulus:
+        content_section = f"\nCONTENT/STIMULUS ANALYZED:\n\"{stimulus_content}\"\n" if stimulus_content else ""
 
+        user_prompt = f"""Analyze this brain activation data from a {modality} stimulus:
+{content_section}
 BRAIN REGION ACTIVATIONS:
 {activation_table}
 
@@ -672,7 +671,7 @@ COMPOSITE SCORES:
 ENGAGEMENT PROFILE: {summary['engagement_label']}
 DOMINANT BRAIN SYSTEMS: {dominant}
 
-Generate a personalized neuroscience analysis. Focus on what this SPECIFIC pattern of activations means, why it matters, and what it reveals about how the brain is processing this {modality}."""
+Generate a personalized neuroscience analysis. Focus deeply on linking the meaning/intention of the CONTENT (if provided) with what this SPECIFIC pattern of activations reveals about how the brain processes it."""
 
         response = client.chat.completions.create(
             model=groq_model,
@@ -749,6 +748,7 @@ def _render_results(result: dict):
                 edu_mode=edu_mode,
                 groq_key=groq_key,
                 groq_model=groq_model,
+                stimulus_content=result.get("stimulus_content", ""),
             )
         if llm_text:
             st.markdown(
@@ -818,6 +818,7 @@ with tab_img:
         if st.button("\U0001f9e0 Predict brain response", key="btn_img"):
             with st.spinner("Calling TRIBE v2 backend\u2026"):
                 result = predict_from_image(uploaded_img.read())
+                result["stimulus_content"] = "[Visual image stimulus uploaded by user]"
             _render_results(result)
 
 # ── Video tab ─────────────────────────────────────────────────────────────────
@@ -830,6 +831,7 @@ with tab_vid:
         if st.button("\U0001f9e0 Predict brain response", key="btn_vid"):
             with st.spinner("Sending video to backend (may take ~30 s)\u2026"):
                 result = predict_from_video(uploaded_vid.read())
+                result["stimulus_content"] = "[Video stimulus uploaded by user]"
             _render_results(result)
 
 # ── Text tab ──────────────────────────────────────────────────────────────────
@@ -848,6 +850,7 @@ with tab_txt:
     if st.button("\U0001f9e0 Predict brain response", key="btn_txt") and user_text.strip():
         with st.spinner("Running text through TRIBE v2\u2026"):
             result = predict_from_text(user_text.strip())
+            result["stimulus_content"] = user_text.strip()
         _render_results(result)
     
 
