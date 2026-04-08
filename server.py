@@ -30,12 +30,17 @@ CHUNK = 20484 // len(ROI_KEYS)
 # Load model
 model = None
 try:
+    # Test import FIRST so we don't waste 3 minutes downloading weights if the library isn't installed
+    import importlib.util
+    if importlib.util.find_spec("tribev2") is None:
+        raise ImportError("No module named 'tribev2'")
+
     print("Downloading/Loading model weights...")
+    from tribev2 import TribeModel
     model_path = snapshot_download(
         repo_id='facebook/tribev2',
         ignore_patterns=['*subject_0[2-9]*', '*subject_1*'],
     )
-    from tribev2 import TribeModel
     model = TribeModel.from_pretrained(model_path)
     model.eval()
     if torch.cuda.is_available():
