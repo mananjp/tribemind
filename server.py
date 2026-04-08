@@ -4,6 +4,8 @@ import base64
 import tempfile
 import numpy as np
 import torch
+from dotenv import load_dotenv
+load_dotenv()
 import uvicorn
 from PIL import Image
 from fastapi import FastAPI, HTTPException
