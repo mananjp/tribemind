@@ -849,8 +849,7 @@ with tab_txt:
         with st.spinner("Running text through TRIBE v2\u2026"):
             result = predict_from_text(user_text.strip())
         _render_results(result)
-    elif st.button("\U0001f9e0 Predict brain response", key="btn_txt_empty") and not user_text.strip():
-        st.warning("Please enter some text first.")
+    
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
