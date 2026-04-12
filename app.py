@@ -764,13 +764,13 @@ def _render_results(result: dict):
     col_left, col_right = st.columns([3, 2])
     with col_left:
         st.markdown("### \U0001f578\ufe0f Full-brain radar")
-        st.plotly_chart(_radar(activations, activation_threshold), use_container_width=True)
+        st.plotly_chart(_radar(activations, activation_threshold), use_container_width=True, config={'displayModeBar': False})
     with col_right:
         st.markdown("### \U0001f4ca System breakdown")
-        st.plotly_chart(_donut(activations), use_container_width=True)
+        st.plotly_chart(_donut(activations), use_container_width=True, config={'displayModeBar': False})
 
     st.markdown("### \U0001f4c8 Top activated regions")
-    st.plotly_chart(_bar(activations, top_n), use_container_width=True)
+    st.plotly_chart(_bar(activations, top_n), use_container_width=True, config={'displayModeBar': False})
 
     # ── Region cards ─────────────────────────────────────────────────────────
     st.markdown("### \U0001f50d What each activated region means")
@@ -876,3 +876,4 @@ st.caption(
     "**academic understanding of brain function**. This tool does not store, judge, or report any uploaded content. "
     "Users are responsible for ensuring compliance with applicable laws and institutional policies."
 )
+st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
