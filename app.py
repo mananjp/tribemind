@@ -817,6 +817,7 @@ with tab_img:
             st.image(uploaded_img, caption="Your image", use_container_width=True)
         if st.button("\U0001f9e0 Predict brain response", key="btn_img"):
             with st.spinner("Calling TRIBE v2 backend\u2026"):
+                uploaded_img.seek(0)
                 result = predict_from_image(uploaded_img.read())
                 result["stimulus_content"] = "[Visual image stimulus uploaded by user]"
             _render_results(result)
@@ -830,6 +831,7 @@ with tab_vid:
         st.video(uploaded_vid)
         if st.button("\U0001f9e0 Predict brain response", key="btn_vid"):
             with st.spinner("Sending video to backend (may take ~30 s)\u2026"):
+                uploaded_vid.seek(0)
                 result = predict_from_video(uploaded_vid.read())
                 result["stimulus_content"] = "[Video stimulus uploaded by user]"
             _render_results(result)

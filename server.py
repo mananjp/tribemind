@@ -90,6 +90,11 @@ def image_to_tmp_video(img_bytes, duration=2, fps=4):
     tmp.close()
     
     h, w = img.shape[:2]
+    if h % 2 != 0 or w % 2 != 0:
+        h -= h % 2
+        w -= w % 2
+        img = cv2.resize(img, (w, h))
+
     out = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
     for _ in range(duration * fps):
         out.write(cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
