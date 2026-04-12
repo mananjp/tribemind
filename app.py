@@ -454,7 +454,7 @@ def _radar(activations: dict, threshold: float) -> go.Figure:
             angularaxis=dict(color="#aaa", gridcolor="#333")
         ),
         paper_bgcolor="#0e1117", font_color="#eee",
-        margin=dict(l=40, r=40, t=40, b=40), height=420
+        margin=dict(l=40, r=40, t=40, b=40), height=420, width=650
     )
     return fig
 
@@ -475,7 +475,7 @@ def _bar(activations: dict, top_n: int) -> go.Figure:
         font_color="#eee", height=380,
         xaxis=dict(range=[0, 1.15], title="Activation strength", color="#aaa", gridcolor="#333"),
         yaxis=dict(autorange="reversed", color="#aaa"),
-        margin=dict(l=10, r=40, t=20, b=30)
+        margin=dict(l=10, r=40, t=20, b=30), width=1000
     )
     return fig
 
@@ -497,7 +497,7 @@ def _donut(activations: dict) -> go.Figure:
     ))
     fig.update_layout(
         paper_bgcolor="#0e1117", font_color="#eee",
-        showlegend=False, height=320,
+        showlegend=False, height=320, width=450,
         margin=dict(l=10, r=10, t=20, b=10)
     )
     return fig
@@ -600,6 +600,7 @@ def _build_summary_html(summary: dict) -> str:
 
 
 # ── Helper: Groq LLM-powered summary ─────────────────────────────────────────
+@st.cache_data(show_spinner=False, ttl=3600)
 def _generate_llm_summary(
     activations: dict,
     summary: dict,
@@ -764,13 +765,13 @@ def _render_results(result: dict):
     col_left, col_right = st.columns([3, 2])
     with col_left:
         st.markdown("### \U0001f578\ufe0f Full-brain radar")
-        st.plotly_chart(_radar(activations, activation_threshold), use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(_radar(activations, activation_threshold), use_container_width=False, config={'displayModeBar': False})
     with col_right:
         st.markdown("### \U0001f4ca System breakdown")
-        st.plotly_chart(_donut(activations), use_container_width=True, config={'displayModeBar': False})
+        st.plotly_chart(_donut(activations), use_container_width=False, config={'displayModeBar': False})
 
     st.markdown("### \U0001f4c8 Top activated regions")
-    st.plotly_chart(_bar(activations, top_n), use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(_bar(activations, top_n), use_container_width=False, config={'displayModeBar': False})
 
     # ── Region cards ─────────────────────────────────────────────────────────
     st.markdown("### \U0001f50d What each activated region means")
