@@ -820,7 +820,7 @@ with tab_img:
                 uploaded_img.seek(0)
                 result = predict_from_image(uploaded_img.read())
                 result["stimulus_content"] = "[Visual image stimulus uploaded by user]"
-            _render_results(result)
+                st.session_state["current_result"] = result
 
 # ── Video tab ─────────────────────────────────────────────────────────────────
 with tab_vid:
@@ -834,7 +834,7 @@ with tab_vid:
                 uploaded_vid.seek(0)
                 result = predict_from_video(uploaded_vid.read())
                 result["stimulus_content"] = "[Video stimulus uploaded by user]"
-            _render_results(result)
+                st.session_state["current_result"] = result
 
 # ── Text tab ──────────────────────────────────────────────────────────────────
 with tab_txt:
@@ -853,8 +853,13 @@ with tab_txt:
         with st.spinner("Running text through TRIBE v2\u2026"):
             result = predict_from_text(user_text.strip())
             result["stimulus_content"] = user_text.strip()
-        _render_results(result)
+            st.session_state["current_result"] = result
     
+
+# ── Global Result Rendering ───────────────────────────────────────────────────
+if "current_result" in st.session_state:
+    st.divider()
+    _render_results(st.session_state["current_result"])
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
